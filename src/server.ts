@@ -1,11 +1,29 @@
-import express from 'express'
+import express, { type Application, type Request, type Response } from 'express'
+import {Pool} from "pg";
+const app:Application = express()
+ const port=5000;
+ 
 
-const app = express()
+app.use(express.json());
+app.use(express.text());
+app.use(express.urlencoded())
 
-app.get('/', (req, res) => {
-  res.send('Hello World')
+const pool=new Pool({
+  connectionString:"postgresql://neondb_owner:npg_nuMNVa8vie2G@ep-wandering-hall-ao87fn9a.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
 })
 
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000')
+
+app.get('/', (req:Request, res:Response) => {
+  res.status(200).json({
+    message:"server is running",
+    author:"joy"
+  })
+})
+
+app.post('/',async(req:Request,res)=>{
+  
+})
+
+app.listen(port, () => {
+  console.log(`Server is running on ${port}`)
 })
