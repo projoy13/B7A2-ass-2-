@@ -1,6 +1,7 @@
 import express, { type Application, type Request, type Response } from 'express'
 import { Pool } from 'pg'
 import bcrypt from 'bcryptjs'
+import config from './config'
 
 const app: Application = express()
 const port = 5000
@@ -11,7 +12,7 @@ app.use(express.urlencoded({ extended: true }))
 
 
 const pool = new Pool({
-  connectionString: "postgresql://neondb_owner:npg_nuMNVa8vie2G@ep-wandering-hall-ao87fn9a.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+  connectionString:config.connection_string
 })
 
 const initDB = async () => {
@@ -73,8 +74,141 @@ app.post('/', async (req: Request, res: Response) => {
   }
 })
 
-// ✅ START SERVER (with DB init first)
-app.listen(port, async () => {
+// GET ALL USER
+
+app.get('/all',async(req:Request,res:Response)=>{
+
+  console.log("connected")
+ try {
+   const result=await pool.query(`SELECT * FROM users`);
+  res.status(200).json({
+    success:true,
+    message:"user retrieved successfully",
+    data:result.rows
+  })
+  
+ } catch (error:any) {
+  res.status(500).json({
+      success: false,
+      message: error.message
+    })
+ }
+})
+
+// GET SINGEL USER 
+
+app.get('/:id', async (req: Request, res: Response) => {
+  const id = Number(req.params.id)
+
+  try {
+    const result = await pool.query(
+      `SELECT * FROM users WHERE id = $1`,
+      [id]
+    )
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "user not found",
+        data: {}
+      })
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "user retrieved successfully",
+      data: result.rows[0]
+    })
+
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+})
+
+// UPDATE USER
+app.put('/:id', async (req: Request, res: Response) => {
+  const { id } = req.params
+  const { name, email, password, role } = req.body
+
+  try {
+    const result = await pool.query(
+      `
+      UPDATE users
+      SET
+        name = COALESCE($1, name),
+        email = COALESCE($2, email),
+        password = COALESCE($3, password),
+        role = COALESCE($4, role),
+        updated_at = NOW()
+      WHERE id = $5
+      RETURNING *
+      `,
+      [name, email, password, role, id]
+    )
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "user not found",
+        data: {}
+      })
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "user updated successfully",
+      data: result.rows[0]
+    })
+
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+})
+// DELETE USERS
+
+app.delete('/:id', async (req: Request, res: Response) => {
+  const { id } = req.params
+
+  try {
+    const result = await pool.query(
+      `
+      DELETE FROM users
+      WHERE id = $1
+      RETURNING *
+      `,
+      [id]
+    )
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "user not found",
+        data: {}
+      })
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "user deleted successfully",
+      data: result.rows[0]
+    })
+
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+})
+
+//  START SERVER (with DB init first)
+app.listen(config.port, async () => {
   await initDB()
-  console.log(`Server is running on ${port}`)
+  console.log(`Server is running on ${config.port}`)
 })
