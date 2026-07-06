@@ -8,5 +8,5 @@ const config={
     connection_string:process.env.CONNECTIONSTRING,
      port:process.env.PORT
 }
-console.log(config)
+// console.log(config)
 export default config
