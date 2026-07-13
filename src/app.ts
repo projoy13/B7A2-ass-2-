@@ -6,7 +6,11 @@
 import { initDB, pool } from './db'
 
 import router from './module/user/user.router'
-
+import issuseRouter from './module/issues/issue.route'
+import { authRoute } from './auth/auth.route'
+import fs from "fs"
+import { log } from 'console'
+import logger from './middleware/logger'
 export  const app = express()
 // const port = 5000
 
@@ -14,7 +18,9 @@ app.use(express.json())
 app.use(express.text())
 app.use(express.urlencoded({ extended: true }))
 
+// import fs from "fs";
 
+app.use(logger);
 
  initDB()
 //  GET ROUTE
@@ -25,8 +31,10 @@ app.get('/', (req: Request, res: Response) => {
   })
 })
 
+
+app.use('/api/auth',authRoute)
 // CREATE USER
-app.use("/api/user",router)
+app.use("/api",router)
 
 // GET ALL USER
 
@@ -42,4 +50,5 @@ app.use("/api/user",router)
 
 // app.delete('/',router)
 
-//  START SERVER (with DB init first)
+//  issue
+app.use('/api/issues',issuseRouter)

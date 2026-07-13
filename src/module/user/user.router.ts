@@ -2,12 +2,16 @@ import bcrypt from "bcryptjs";
 import { Router, type Request, type Response } from "express";
 import { pool } from "../../db";
 import { userController } from "./user.controller";
+import auth from "../../middleware/auth";
+import { USER_role } from "../../TYPES";
 
-const router=Router()
+export const router=Router()
+
+
 // create
-router.post('/',userController.creatUser)
+router.post('/auth/signup',userController.creatUser)
 // get all
-router.get('/all',userController.getallUser)
+router.get('/all',auth(USER_role.contributor,USER_role.maintainer),userController.getallUser)
 // get single id
 router.get('/:id',userController.singleuser)
 // update user
