@@ -25,7 +25,7 @@ const auth = (...roles:ROLES[]) => {
                 token,
                 config.secret as string
             ) as { email:string };
-
+          console.log(decoded)
 
             const userData = await pool.query(
                 `
@@ -45,7 +45,8 @@ const auth = (...roles:ROLES[]) => {
                     message:"user not found"
                 });
             }
-
+         (req as any).user;
+         next ;
 
             if(roles.length && !roles.includes(user.role)){
                 return res.status(403).json({

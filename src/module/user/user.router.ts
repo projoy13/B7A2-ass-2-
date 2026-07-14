@@ -15,7 +15,7 @@ router.get('/all',auth(USER_role.contributor,USER_role.maintainer),userControlle
 // get single id
 router.get('/:id',userController.singleuser)
 // update user
-router.put("/:id",userController.updateuser)
+router.put('/:id',userController.updateuser)
 // delete user
 router.delete('/:id',userController.deleteuser)
 

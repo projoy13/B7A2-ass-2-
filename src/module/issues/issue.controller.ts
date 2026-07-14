@@ -14,7 +14,7 @@ try {
     res.status(500).json({
         success:false,
         message:"failed to creat issue",
-        error:error
+        error:error.message
     })
 }
 
