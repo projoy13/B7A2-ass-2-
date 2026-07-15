@@ -18,11 +18,32 @@ Add these scripts to package.json
 
 Command: [npm i tsup]
 
-tsup.config.ts
+
+<!-- creat a file with this name -->
+<!-- tsup.config.ts -->
 
 import { defineConfig } from "tsup";
 
+<!-- 
+creat a file in root with name tsup.config.ts and pest this code
 
+
+1
+import { defineConfig } from "tsup";
+
+export default defineConfig({
+  entry: ["src/server.ts"], // Change this if your entry file is different
+  outDir: "dist",
+  format: ["cjs"],
+  target: "node20",
+  clean: true,
+  sourcemap: true,
+  minify: false,
+  splitting: false,
+  dts: false,
+  skipNodeModulesBundle: true
+});
+ -->
 
 
 

@@ -67,3 +67,4 @@
 2026-07-13T21:05:10.904Z - GET - /api/issues/all
 2026-07-13T21:05:24.300Z - PUT - /api/issues/1
 2026-07-14T07:40:24.031Z - POST - /api/auth/login
+2026-07-14T15:42:35.443Z - GET - /
